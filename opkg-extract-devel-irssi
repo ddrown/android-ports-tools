@@ -1,0 +1,3 @@
+#!/bin/sh
+
+opkg-extract-devel --irssi "$1"

@@ -1,0 +1,92 @@
+#!/bin/sh
+
+NDK_HOME=~/droid/android-ndk
+TOOLCHAIN=$NDK_HOME/toolchains/arm-linux-androideabi-4.6
+BIN=$TOOLCHAIN/prebuilt/linux-x86/bin
+GXX=$BIN/arm-linux-androideabi-g++
+LIBGCC=$TOOLCHAIN/prebuilt/linux-x86/lib/gcc/arm-linux-androideabi/4.6.x-google/libgcc.a
+PLATFORM_DIR=$NDK_HOME/platforms/android-8
+PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-arm/usr/lib/
+PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-arm/usr/include/
+CXX_INCLUDE_DIR=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/include/
+CXX_INCLUDE_DIR_ARCH=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/include/
+CXX_LIB_DIR_ARCH=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/
+
+ANDROID_PORTS_INCLUDE=~/droid/include/
+
+CRTBEGIN=$PLATFORM_LIB_DIR/crtbegin_dynamic.o
+CRTEND=$PLATFORM_LIB_DIR/crtend_android.o
+
+LINKERARGS=""
+INCLUDEARGS=""
+ENDLIBS=""
+
+# devel package libraries
+if [ -n "$BASEDIR" -a -d ~/droid/$BASEDIR/lib ]; then
+  LINKERARGS="-L"`echo ~/droid/$BASEDIR/lib`
+elif [ -d ~/droid/data/local/lib ]; then
+  LINKERARGS="-L"`echo ~/droid/data/local/lib`
+fi
+# devel package headers
+if [ -n "$BASEDIR" -a -d ~/droid/$BASEDIR/include ]; then
+  INCLUDEARGS="-I"`echo ~/droid/$BASEDIR/include`
+elif [ -d ~/droid/data/local/include ]; then
+  INCLUDEARGS="-I"`echo ~/droid/data/local/include`
+fi
+
+if echo " " "$*" | egrep -q -- '(^| )-shared '; then
+  # tell gcc to not use the built-in default libraries
+  LINKERARGS="$LINKERARGS -nostdlib"
+  # note: use crtbegin_so / crtend_so?
+  # where to find the system libraries like bionic
+  LINKERARGS="$LINKERARGS -L$PLATFORM_LIB_DIR"
+  # tell ld where to find system libraries at link time
+  LINKERARGS="$LINKERARGS -Wl,-rpath-link=$PLATFORM_LIB_DIR"
+  # where to find the system libraries like bionic
+  LINKERARGS="$LINKERARGS -L$PLATFORM_LIB_DIR -L$CXX_LIB_DIR_ARCH"
+  # link against bionic (libc)
+  LINKERARGS="$LINKERARGS -lc"
+  # link against stdc++
+  if [ -z "$USE_STATIC_GNUSTL" ]; then
+    LINKERARGS="$LINKERARGS -lgnustl_shared"
+  else
+    ENDLIBS="$CXX_LIB_DIR_ARCH/libgnustl_static.a"
+  fi
+
+  # needed for things like __aeabi_ulcmp
+  ENDLIBS="$ENDLIBS $LIBGCC"
+elif echo " " "$*" | egrep -q -- '(^| )-(c|S|E|nostdlib) '; then
+  # linker not used for these or we're passing our own linker arguments
+  LINKERARGS=""
+else
+  # tell gcc to not use the built-in default libraries
+  LINKERARGS="$LINKERARGS -nostdlib"
+  # where to find the executable start/stop objects
+  LINKERARGS="$LINKERARGS $CRTBEGIN $CRTEND"
+  # where to find the system libraries like bionic
+  LINKERARGS="$LINKERARGS -L$PLATFORM_LIB_DIR -L$CXX_LIB_DIR_ARCH"
+  # link against bionic (libc)
+  LINKERARGS="$LINKERARGS -lc"
+  # link against stdc++
+  if [ -z "$USE_STATIC_GNUSTL" ]; then
+    LINKERARGS="$LINKERARGS -lgnustl_shared"
+  else
+    ENDLIBS="$CXX_LIB_DIR_ARCH/libgnustl_static.a"
+  fi
+  # tell ld where to find system libraries at link time
+  LINKERARGS="$LINKERARGS -Wl,-rpath-link=$PLATFORM_LIB_DIR"
+
+  # needed for things like __aeabi_ulcmp
+  ENDLIBS="$ENDLIBS $LIBGCC"
+fi
+
+ISYSTEM_ARGS="-isystem $ANDROID_PORTS_INCLUDE -isystem $PLATFORM_INCLUDE_DIR"
+ISYSTEM_ARGS="$ISYSTEM_ARGS -isystem $CXX_INCLUDE_DIR -isystem $CXX_INCLUDE_DIR_ARCH"
+
+CMDARGS="$INCLUDEARGS $ISYSTEM_ARGS $LINKERARGS"
+
+if [ -n "$DEBUG_AGCC" ]; then
+  set -x
+  echo "STAR: $*"
+fi
+$GXX $CMDARGS "$@" $ENDLIBS

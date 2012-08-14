@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" == "--irssi" ]; then
+    shift
+    BASEDIR=data/data/org.woltage.irssiconnectbot/files
+else
+    BASEDIR=data/local
+fi
+
+if [ $# -lt 1 ]; then
+	echo "usage: $0: package.opk"
+	exit 1
+fi
+
+opkgfilename=$1
+
+case $opkgfilename in
+http:*)
+    wget -N $opkgfilename
+    opkgfilename=`basename $opkgfilename`
+    echo eez http url $opkgfilename
+;;
+ftp:*)
+    wget -N $opkgfilename
+    opkgfilename=`basename $opkgfilename`
+    echo eez ftp url $opkgfilename
+;;
+esac
+
+
+tmpdir=~/tmp/opkg-extract-$$
+mkdir $tmpdir
+
+pkgdir=$tmpdir/`basename $opkgfilename | sed 's/.*\///;s/.opk$//;s/.deb$//;s/.ipk$//'`
+mkdir $pkgdir
+
+cur_dir=`pwd`
+cd $pkgdir; (ar x $cur_dir/$opkgfilename || tar zxf $cur_dir/$opkgfilename) >& /dev/null
+
+tar zxvf $pkgdir/data.tar.gz -C ~/droid/ $BASEDIR/lib $BASEDIR/include
+rm -rf $tmpdir

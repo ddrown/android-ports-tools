@@ -1,0 +1,72 @@
+#!/bin/sh
+
+NDK_HOME=~/droid/android-ndk
+TOOLCHAIN=$NDK_HOME/toolchains/arm-linux-androideabi-4.6
+BIN=$TOOLCHAIN/prebuilt/linux-x86/bin
+GCC=$BIN/arm-linux-androideabi-gcc
+LIBGCC=$TOOLCHAIN/prebuilt/linux-x86/lib/gcc/arm-linux-androideabi/4.6.x-google/libgcc.a
+PLATFORM_DIR=$NDK_HOME/platforms/android-8
+if [ -n "$GOOGLE_PLATFORM" ]; then
+  PLATFORM_DIR=$NDK_HOME/platforms/android-$GOOGLE_PLATFORM
+fi
+PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-arm/usr/lib/
+PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-arm/usr/include/
+
+ANDROID_PORTS_INCLUDE=~/droid/include/
+
+CRTBEGIN=$PLATFORM_LIB_DIR/crtbegin_dynamic.o
+CRTEND=$PLATFORM_LIB_DIR/crtend_android.o
+
+ENDLIBS=""
+
+LINKERARGS=""
+INCLUDEARGS=""
+
+# devel package libraries
+if [ -d ~/droid/data/local/lib ]; then
+  DATA_LIBDIR=~/droid/data/local/lib
+  LINKERARGS="-L$DATA_LIBDIR -Wl,-rpath-link=$DATA_LIBDIR"
+fi
+# devel package headers
+if [ -d ~/droid/data/local/include ]; then
+  INCLUDEARGS="-I"`echo ~/droid/data/local/include`
+fi
+
+if echo " " "$*" | egrep -q -- '(^| )-shared '; then
+  # tell gcc to not use the built-in default libraries
+  LINKERARGS="$LINKERARGS -nostdlib"
+  # where to find the system libraries like bionic
+  LINKERARGS="$LINKERARGS -L$PLATFORM_LIB_DIR"
+  # link against bionic (libc)
+  LINKERARGS="$LINKERARGS -lc"
+  # tell ld where to find system libraries at link time
+  LINKERARGS="$LINKERARGS -Wl,-rpath-link=$PLATFORM_LIB_DIR"
+
+  # needed for things like __aeabi_ulcmp
+  ENDLIBS="$LIBGCC"
+elif echo " " "$*" | egrep -q -- '(^| )-(c|S|E|nostdlib) '; then
+  # linker not used for these or we're passing our own linker arguments
+  LINKERARGS=""
+else
+  # tell gcc to not use the built-in default libraries
+  LINKERARGS="$LINKERARGS -nostdlib"
+  # where to find the executable start/stop objects
+  LINKERARGS="$LINKERARGS $CRTBEGIN $CRTEND"
+  # where to find the system libraries like bionic
+  LINKERARGS="$LINKERARGS -L$PLATFORM_LIB_DIR"
+  # link against bionic (libc)
+  LINKERARGS="$LINKERARGS -lc"
+  # tell ld where to find system libraries at link time
+  LINKERARGS="$LINKERARGS -Wl,-rpath-link=$PLATFORM_LIB_DIR"
+
+  # needed for things like __aeabi_ulcmp
+  ENDLIBS="$LIBGCC"
+fi
+
+CMDARGS="$INCLUDEARGS -isystem $ANDROID_PORTS_INCLUDE -isystem $PLATFORM_INCLUDE_DIR $LINKERARGS"
+
+if [ -n "$DEBUG_AGCC" ]; then
+  set -x
+  echo "STAR: $*"
+fi
+$GCC $CMDARGS "$@" $ENDLIBS
