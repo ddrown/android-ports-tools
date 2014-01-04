@@ -1,20 +1,20 @@
 #!/bin/sh
 
 NDK_HOME=~/droid/android-ndk
-TOOLCHAIN=$NDK_HOME/toolchains/arm-linux-androideabi-4.6
-BIN=$TOOLCHAIN/prebuilt/linux-x86/bin
+TOOLCHAIN=$NDK_HOME/default-toolchain
+BIN=$TOOLCHAIN/bin
 GXX=$BIN/arm-linux-androideabi-g++
-LIBGCC=$TOOLCHAIN/prebuilt/linux-x86/lib/gcc/arm-linux-androideabi/4.6.x-google/libgcc.a
+LIBGCC=~/droid/lib/libgcc.a
 PLATFORM_DIR=$NDK_HOME/platforms/android-8
 PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-arm/usr/lib/
 PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-arm/usr/include/
-CXX_INCLUDE_DIR=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/include/
+CXX_INCLUDE_DIR=~/droid/lib/libstdc++/include/
 if [ -n "$ARMV7" ]; then
-  CXX_INCLUDE_DIR_ARCH=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/include/
-  CXX_LIB_DIR_ARCH=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi-v7a/
+  CXX_INCLUDE_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi-v7a/include/
+  CXX_LIB_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi-v7a/
 else
-  CXX_INCLUDE_DIR_ARCH=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi/include/
-  CXX_LIB_DIR_ARCH=$NDK_HOME/sources/cxx-stl/gnu-libstdc++/4.6/libs/armeabi/
+  CXX_INCLUDE_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi/include/
+  CXX_LIB_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi/
 fi
 
 ANDROID_PORTS_INCLUDE=~/droid/include/

@@ -1,1 +1,1 @@
-../android-ndk/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb
+../android-ndk/default-toolchain/bin/arm-linux-androideabi-gdb
