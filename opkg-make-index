@@ -1,7 +1,9 @@
 #!/usr/bin/python
 
+# originally: https://github.com/shr-project/opkg-utils/blob/master/opkg-make-index
+
 import sys, os, posixpath
-libpath = os.environ["HOME"] + "/droid/lib/python";
+libpath = os.environ["HOME"] + "/droid/bin/lib";
 sys.path.append(libpath);
 from glob import glob
 import commands
