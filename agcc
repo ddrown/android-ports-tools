@@ -1,16 +1,28 @@
 #!/bin/sh
 
 NDK_HOME=~/droid/android-ndk
-TOOLCHAIN=$NDK_HOME/default-toolchain
-BIN=$TOOLCHAIN/bin
-GCC=$BIN/arm-linux-androideabi-gcc
-LIBGCC=~/droid/lib/libgcc.a
-PLATFORM_DIR=$NDK_HOME/platforms/android-8
+
+# 8 - Froyo/2.2, 15 - Ice Cream Sandwich/4.0.3
+PLATFORM_DIR=$NDK_HOME/platforms/android-15
 if [ -n "$GOOGLE_PLATFORM" ]; then
   PLATFORM_DIR=$NDK_HOME/platforms/android-$GOOGLE_PLATFORM
 fi
-PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-arm/usr/lib/
-PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-arm/usr/include/
+
+if [ "$ARCH_NAME" == x86 ]; then
+  TOOLCHAIN=$NDK_HOME/default-x86-toolchain
+  BIN=$TOOLCHAIN/bin
+  GCC=$BIN/i686-linux-android-gcc
+  ARCH_NAME=x86
+else
+  TOOLCHAIN=$NDK_HOME/default-arm-toolchain
+  BIN=$TOOLCHAIN/bin
+  GCC=$BIN/arm-linux-androideabi-gcc
+  ARCH_NAME=arm
+fi
+
+LIBGCC=~/droid/lib-$ARCH_NAME/libgcc.a
+PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-$ARCH_NAME/usr/lib/
+PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-$ARCH_NAME/usr/include/
 
 ANDROID_PORTS_INCLUDE=~/droid/include/
 
@@ -23,8 +35,8 @@ LINKERARGS=""
 INCLUDEARGS=""
 
 # devel package libraries
-if [ -d ~/droid/data/local/lib ]; then
-  DATA_LIBDIR=~/droid/data/local/lib
+if [ -d ~/droid/data/local/lib-$ARCH_NAME ]; then
+  DATA_LIBDIR=~/droid/data/local/lib-$ARCH_NAME
   LINKERARGS="-L$DATA_LIBDIR -Wl,-rpath-link=$DATA_LIBDIR"
 fi
 # devel package headers
