@@ -1,1 +1,1 @@
-../android-ndk/default-toolchain/bin/arm-linux-androideabi-objdump
+../android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-objdump
