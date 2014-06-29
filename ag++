@@ -1,16 +1,33 @@
 #!/bin/sh
 
 NDK_HOME=~/droid/android-ndk
-TOOLCHAIN=$NDK_HOME/default-toolchain
-BIN=$TOOLCHAIN/bin
-GXX=$BIN/arm-linux-androideabi-g++
-LIBGCC=~/droid/lib/libgcc.a
-PLATFORM_DIR=$NDK_HOME/platforms/android-8
-PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-arm/usr/lib/
-PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-arm/usr/include/
-CXX_INCLUDE_DIR=~/droid/lib/libstdc++/include/
-CXX_INCLUDE_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi-v7a/include/
-CXX_LIB_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi-v7a/
+# 8 - Froyo/2.2, 15 - Ice Cream Sandwich/4.0.3
+PLATFORM_DIR=$NDK_HOME/platforms/android-15
+if [ -n "$GOOGLE_PLATFORM" ]; then
+  PLATFORM_DIR=$NDK_HOME/platforms/android-$GOOGLE_PLATFORM
+fi
+
+if [ "$ARCH_NAME" == x86 ]; then
+  TOOLCHAIN=$NDK_HOME/default-x86-toolchain
+  BIN=$TOOLCHAIN/bin
+  GXX=$BIN/i686-linux-android-g++
+  ARCH_NAME=x86
+  LIBSTDCXX_ARCH=x86
+else
+  TOOLCHAIN=$NDK_HOME/default-arm-toolchain
+  BIN=$TOOLCHAIN/bin
+  GXX=$BIN/arm-linux-androideabi-g++
+  ARCH_NAME=arm
+  LIBSTDCXX_ARCH=armeabi-v7a
+fi
+
+LIBGCC=~/droid/lib-$ARCH_NAME/libgcc.a
+PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-$ARCH_NAME/usr/lib/
+PLATFORM_INCLUDE_DIR=$PLATFORM_DIR/arch-$ARCH_NAME/usr/include/
+
+CXX_INCLUDE_DIR=~/droid/lib-$ARCH_NAME/libstdc++/include/
+CXX_INCLUDE_DIR_ARCH=~/droid/lib-$ARCH_NAME/libstdc++/libs/$LIBSTDCXX_ARCH/include/
+CXX_LIB_DIR_ARCH=~/droid/lib-$ARCH_NAME/libstdc++/libs/$LIBSTDCXX_ARCH/
 # CXX_INCLUDE_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi/include/
 # CXX_LIB_DIR_ARCH=~/droid/lib/libstdc++/libs/armeabi/
 
@@ -24,10 +41,10 @@ INCLUDEARGS=""
 ENDLIBS=""
 
 # devel package libraries
-if [ -n "$BASEDIR" -a -d ~/droid/$BASEDIR/lib ]; then
-  LINKERARGS="-L"`echo ~/droid/$BASEDIR/lib`
-elif [ -d ~/droid/data/local/lib ]; then
-  LINKERARGS="-L"`echo ~/droid/data/local/lib`
+if [ -n "$BASEDIR" -a -d ~/droid/$BASEDIR/lib-$ARCH_NAME ]; then
+  LINKERARGS="-L"`echo ~/droid/$BASEDIR/lib-$ARCH_NAME`
+elif [ -d ~/droid/data/local/lib-$ARCH_NAME ]; then
+  LINKERARGS="-L"`echo ~/droid/data/local/lib-$ARCH_NAME`
 fi
 # devel package headers
 if [ -n "$BASEDIR" -a -d ~/droid/$BASEDIR/include ]; then
