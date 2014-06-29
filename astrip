@@ -1,1 +1,7 @@
-../android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-strip
+#!/bin/sh
+
+if [ "$ARCH_NAME" == x86 ]; then
+  ~/droid/android-ndk/default-x86-toolchain/bin/i686-linux-android-strip "$@"
+else
+  ~/droid/android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-strip "$@"
+fi
