@@ -1,7 +1,13 @@
 #!/bin/sh
 
-if [ "$ARCH_NAME" == x86 ]; then
-  ~/droid/android-ndk/default-x86-toolchain/bin/i686-linux-android-strip "$@"
-else
-  ~/droid/android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-strip "$@"
-fi
+case "$ARCH_NAME" in
+  x86)
+    ~/droid/android-ndk/default-x86-toolchain/bin/i686-linux-android-strip "$@"
+    ;;
+  arm)
+    ~/droid/android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-strip "$@"
+    ;;
+  mips)
+    ~/droid/android-ndk/default-mips-toolchain/bin/mipsel-linux-android-strip "$@"
+    ;;
+esac
