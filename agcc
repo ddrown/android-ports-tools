@@ -8,17 +8,26 @@ if [ -n "$GOOGLE_PLATFORM" ]; then
   PLATFORM_DIR=$NDK_HOME/platforms/android-$GOOGLE_PLATFORM
 fi
 
-if [ "$ARCH_NAME" == x86 ]; then
-  TOOLCHAIN=$NDK_HOME/default-x86-toolchain
-  BIN=$TOOLCHAIN/bin
-  GCC=$BIN/i686-linux-android-gcc
-  ARCH_NAME=x86
-else
-  TOOLCHAIN=$NDK_HOME/default-arm-toolchain
-  BIN=$TOOLCHAIN/bin
-  GCC=$BIN/arm-linux-androideabi-gcc
-  ARCH_NAME=arm
-fi
+case "$ARCH_NAME" in
+  x86)  
+    TOOLCHAIN=$NDK_HOME/default-x86-toolchain
+    BIN=$TOOLCHAIN/bin
+    GCC=$BIN/i686-linux-android-gcc
+    ARCH_NAME=x86
+    ;;
+  arm)
+    TOOLCHAIN=$NDK_HOME/default-arm-toolchain
+    BIN=$TOOLCHAIN/bin
+    GCC=$BIN/arm-linux-androideabi-gcc
+    ARCH_NAME=arm
+    ;;
+  mips)
+    TOOLCHAIN=$NDK_HOME/default-mips-toolchain
+    BIN=$TOOLCHAIN/bin
+    GCC=$BIN/mipsel-linux-android-gcc
+    ARCH_NAME=mips
+    ;;
+esac
 
 LIBGCC=~/droid/lib-$ARCH_NAME/libgcc.a
 PLATFORM_LIB_DIR=$PLATFORM_DIR/arch-$ARCH_NAME/usr/lib/
