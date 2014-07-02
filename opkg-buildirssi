@@ -1,3 +1,4 @@
 #!/bin/sh
 
+sed -i "s/^Architecture:.*/Architecture: $ARCH_NAME/" opkg/control*
 exec opkg-buildpackage data/data/org.woltage.irssiconnectbot/files
