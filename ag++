@@ -29,6 +29,10 @@ case "$ARCH_NAME" in
     ARCH_NAME=mips
     LIBSTDCXX_ARCH=mips
     ;;
+  *)
+    echo unknown architecture \"$ARCH_NAME\" >&2
+    exit 1
+    ;;
 esac
 
 LIBGCC=~/droid/lib-$ARCH_NAME/libgcc.a
