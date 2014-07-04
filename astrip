@@ -10,4 +10,8 @@ case "$ARCH_NAME" in
   mips)
     ~/droid/android-ndk/default-mips-toolchain/bin/mipsel-linux-android-strip "$@"
     ;;
+  *)
+    echo unknown architecture \"$ARCH_NAME\" >&2
+    exit 1
+    ;;
 esac

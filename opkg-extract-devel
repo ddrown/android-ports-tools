@@ -1,10 +1,12 @@
 #!/bin/sh
 
+export PACKAGE_NAME=${PACKAGE_NAME:-org.woltage.irssiconnectbot}
+
 set -e
 
 if [ "$1" == "--irssi" ]; then
     shift
-    BASEDIR=data/data/org.woltage.irssiconnectbot/files
+    BASEDIR=data/data/$PACKAGE_NAME/files
 else
     BASEDIR=data/local
 fi
