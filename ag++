@@ -20,7 +20,7 @@ case "$ARCH_NAME" in
     BIN=$TOOLCHAIN/bin
     GXX=$BIN/arm-linux-androideabi-g++
     ARCH_NAME=arm
-    LIBSTDCXX_ARCH=armeabi-v7a
+    LIBSTDCXX_ARCH=${ANDROID_CPU_ARCH:-armeabi-v7a}
     ;;
   mips)
     TOOLCHAIN=$NDK_HOME/default-mips-toolchain
