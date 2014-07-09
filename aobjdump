@@ -11,11 +11,11 @@ case "$ARCH_NAME" in
   arm)
     TOOLCHAIN=$NDK_HOME/default-arm-toolchain
     BIN=$TOOLCHAIN/bin
-    $BIN/arm-linux-androideabi-objdump "@$"
+    $BIN/arm-linux-androideabi-objdump "$@"
     ;;
   mips)
     TOOLCHAIN=$NDK_HOME/default-mips-toolchain
     BIN=$TOOLCHAIN/bin
-    $BIN/mipsel-linux-android-objdump "@$"
+    $BIN/mipsel-linux-android-objdump "$@"
     ;;
 esac

@@ -16,6 +16,6 @@ case "$ARCH_NAME" in
   mips)
     TOOLCHAIN=$NDK_HOME/default-mips-toolchain
     BIN=$TOOLCHAIN/bin
-    $BIN/mipsel-linux-android-strip "@$"
+    $BIN/mipsel-linux-android-strip "$@"
     ;;
 esac
