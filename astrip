@@ -1,14 +1,22 @@
 #!/bin/sh
 
+NDK_HOME=~/droid/android-ndk
+
 case "$ARCH_NAME" in
   x86)
-    ~/droid/android-ndk/default-x86-toolchain/bin/i686-linux-android-strip "$@"
+    TOOLCHAIN=$NDK_HOME/default-x86-toolchain
+    BIN=$TOOLCHAIN/bin
+    $BIN/i686-linux-android-strip "$@"
     ;;
   arm)
-    ~/droid/android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-strip "$@"
+    TOOLCHAIN=$NDK_HOME/default-arm-toolchain
+    BIN=$TOOLCHAIN/bin
+    $BIN/arm-linux-androideabi-strip "$@"
     ;;
   mips)
-    ~/droid/android-ndk/default-mips-toolchain/bin/mipsel-linux-android-strip "$@"
+    TOOLCHAIN=$NDK_HOME/default-mips-toolchain
+    BIN=$TOOLCHAIN/bin
+    $BIN/mipsel-linux-android-strip "$@"
     ;;
   *)
     echo unknown architecture \"$ARCH_NAME\" >&2

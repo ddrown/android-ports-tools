@@ -1,1 +1,21 @@
-../android-ndk/default-arm-toolchain/bin/arm-linux-androideabi-gdb
+#!/bin/sh
+
+NDK_HOME=~/droid/android-ndk
+
+case "$ARCH_NAME" in
+  x86)
+    TOOLCHAIN=$NDK_HOME/default-x86-toolchain
+    BIN=$TOOLCHAIN/bin
+    $BIN/i686-linux-android-gdb "$@"
+    ;;
+  arm)
+    TOOLCHAIN=$NDK_HOME/default-arm-toolchain
+    BIN=$TOOLCHAIN/bin
+    $BIN/arm-linux-androideabi-gdb "$@"
+    ;;
+  mips)
+    TOOLCHAIN=$NDK_HOME/default-mips-toolchain
+    BIN=$TOOLCHAIN/bin
+    $BIN/mipsel-linux-android-gdb "$@"
+    ;;
+esac
