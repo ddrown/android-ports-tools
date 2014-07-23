@@ -120,6 +120,8 @@ if ! pkg_appears_sane_control $pkg_dir && pkg_appears_sane_control $pkg_dir; the
         exit 1
 fi
 
+sed -i "s/^Architecture:.*/Architecture: $ARCH_NAME/" opkg/control*
+
 echo "Package = $pkg"
 echo "Version = $version"
 version_up=`echo ${version} | sed "s/\-[0-9]\+//"`

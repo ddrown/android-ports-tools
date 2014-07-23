@@ -2,5 +2,4 @@
 
 export PACKAGE_NAME=${PACKAGE_NAME:-org.woltage.irssiconnectbot}
 
-sed -i "s/^Architecture:.*/Architecture: $ARCH_NAME/" opkg/control*
 exec opkg-buildpackage data/data/$PACKAGE_NAME/files
